@@ -15,8 +15,14 @@ namespace CargaExcel
             {
                 using (MarcasRule rule = new MarcasRule())
                 {
-                    grvMarcas.DataSource = rule.Consultar(string.Empty);
-                    grvMarcas.DataBind();
+                    try
+                    {
+                        grvMarcas.DataSource = rule.Consultar(string.Empty);
+                        grvMarcas.DataBind();
+                    }
+                    catch
+                    {
+                    }
 
                     string[] filePaths = Directory.GetFiles(Server.MapPath("~/App_Data/"));
                     foreach (string filePath in filePaths)
