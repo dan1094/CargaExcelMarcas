@@ -8,9 +8,7 @@ namespace Entities
         public string Fonema { get; set; }
         public int Nogaceta { get; set; }
         public DateTime Fgaceta { get; set; }
-
         public string FgacetaString { get { return string.Format("{0:dd/MM/yyyy}", Fgaceta); } }
-
         public int Codigo_clase { get; set; }
         public DateTime Fpresenta { get; set; }
         public string FpresentaString { get { return string.Format("{0:dd/MM/yyyy}", Fpresenta); } }
@@ -22,8 +20,5 @@ namespace Entities
         public string Tipo { get; set; }
         public DateTime Fdigitacio { get; set; }
         public string FdigitacioString { get { return string.Format("{0:dd/MM/yyyy}", Fdigitacio); } }
-
-
-
     }
 }

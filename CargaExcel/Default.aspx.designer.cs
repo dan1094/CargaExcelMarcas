@@ -78,6 +78,24 @@ namespace CargaExcel
         protected global::System.Web.UI.WebControls.TextBox txtFltro;
 
         /// <summary>
+        /// btnComparar control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnComparar;
+
+        /// <summary>
+        /// btnDescargarComparacion control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnDescargarComparacion;
+
+        /// <summary>
         /// grvMarcas control.
         /// </summary>
         /// <remarks>

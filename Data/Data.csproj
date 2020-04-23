@@ -43,6 +43,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Conexion.cs" />
+    <Compile Include="ConexionOdbc.cs" />
+    <Compile Include="ComparacionData.cs" />
+    <Compile Include="FiltroData.cs" />
+    <Compile Include="FolderData.cs" />
     <Compile Include="MarcasData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -12,7 +12,7 @@ namespace Data
         /// </summary>
         /// <param name="registro"></param>
 
-        public void InsertarRegistro(Record registro)
+        public void InsertarRegistroMarca(Record registro)
         {
             SqlCommand sqlcommand = GetSqlCommandInstance("[SPT_MARCAS]");
             sqlcommand.Parameters.AddWithValue("@MARCA", registro.Marca);
@@ -50,7 +50,7 @@ namespace Data
         /// </summary>
         /// <param name="filtro"></param>
         /// <returns></returns>
-        public List<Record> ConsultarBD(string filtro)
+        public List<Record> ConsultarBDMarcas(string filtro)
         {
             SqlCommand sqlcommand = GetSqlCommandInstance("[SPT_MARCAS]");
 
@@ -91,6 +91,7 @@ namespace Data
 
             return listaRegistros;
         }
+               
 
     }
 }

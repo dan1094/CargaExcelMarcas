@@ -4,7 +4,7 @@ using Entities;
 using System.Collections.Generic;
 using SpreadsheetLight;
 using System.IO;
-using System.Data;
+using System.Linq;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 
@@ -59,28 +59,92 @@ namespace Rule
             {
                 foreach (var item in registros)
                 {
-                    data.InsertarRegistro(item);
+                    data.InsertarRegistroMarca(item);
                 }
             }
         }
 
-        public List<Record> Consultar(string marca)
+        public List<Record> ConsultarMarcas(string marca)
         {
             using (MarcasData data = new MarcasData())
             {
-                return data.ConsultarBD(marca);
+                return data.ConsultarBDMarcas(marca);
+            }
+        }
+        public List<ResultadoComparacion> ConsultarGrupos()
+        {
+            using (ComparacionData data = new ComparacionData())
+            {
+                return data.ConsultarAgrupaciones();
             }
         }
 
+        public List<ResultadoComparacion> ConsultarGrupo(ResultadoComparacion filtro)
+        {
+            using (ComparacionData data = new ComparacionData())
+            {
+                return data.Consultargrupo(filtro);
+            }
+        }
         public void BorrarTablaMarcas()
         {
             using (MarcasData data = new MarcasData())
-            {
                 data.BorrarTablaBD();
+
+            using (FiltroRule r = new FiltroRule())
+                r.BorrarTablaFiltro();
+
+            using (ComparacionData r = new ComparacionData())
+                r.BorrarTablaBD();
+        }
+
+        public void RealizarComparacion()
+        {
+            var marcas = ConsultarMarcas(string.Empty);
+
+            List<Filtro> filtros = null;
+            using (FiltroRule r = new FiltroRule())
+            {
+                filtros = r.ConsultarFiltro();
+            }
+            if (filtros == null) filtros = new List<Filtro>();
+            if (marcas == null) marcas = new List<Record>();
+
+            int resultado = 0;
+
+            using (ComparacionData data = new ComparacionData())
+            {
+                ResultadoComparacion comparacion = null;
+                foreach (var marca in marcas)
+                {
+                    foreach (var filtro in filtros)
+                    {
+                        resultado = Comparar(marca.Marca, filtro.FolderName);
+                        if (resultado > 0)
+                        {
+                            comparacion = new ResultadoComparacion();
+                            comparacion.Marca = marca.Marca;
+                            comparacion.Folder = filtro.FolderName;
+                            comparacion.Resultado = resultado;
+                            comparacion.Fecha = DateTime.Now;
+                            comparacion.Clase = marca.Codigo_clase;
+                            comparacion.Gaceta = marca.Nogaceta;
+
+                            data.InsertarResultadoComparacion(comparacion);
+                        }
+                    }
+                }
             }
         }
 
-        public void ArmarPDF(List<Record> registros, string rutaDepositar)
+        private int Comparar(string marca, string folder)
+        {
+            return 85;
+        }
+
+        #region Armar PDF
+
+        public void ArmarPDFMarcas(List<Record> registros, string rutaDepositar)
         {
             FileStream fs = new FileStream(rutaDepositar,
                 FileMode.Create, FileAccess.Write, FileShare.None);
@@ -115,36 +179,36 @@ namespace Rule
             table.SetWidths(widths);
 
             //Table header            
-            AddCellHeader(table, "Marca");
-            AddCellHeader(table, "Fonema");
-            AddCellHeader(table, "No gaceta");
-            AddCellHeader(table, "Fecha Gaceta");
-            AddCellHeader(table, "Cod. Clase");
-            AddCellHeader(table, "Fecha Presenta");
-            AddCellHeader(table, "Nopub");
-            AddCellHeader(table, "Noexp");
-            AddCellHeader(table, "Solicitant");
-            AddCellHeader(table, "Cod. País");
-            AddCellHeader(table, "Apoderado");
-            AddCellHeader(table, "Tipo");
-            AddCellHeader(table, "Fecha digitacion");
+            AddCellHeader(table, "Marca", 9);
+            AddCellHeader(table, "Fonema", 9);
+            AddCellHeader(table, "No gaceta", 9);
+            AddCellHeader(table, "Fecha Gaceta", 9);
+            AddCellHeader(table, "Cod. Clase", 9);
+            AddCellHeader(table, "Fecha Presenta", 9);
+            AddCellHeader(table, "Nopub", 9);
+            AddCellHeader(table, "Noexp", 9);
+            AddCellHeader(table, "Solicitant", 9);
+            AddCellHeader(table, "Cod. País", 9);
+            AddCellHeader(table, "Apoderado", 9);
+            AddCellHeader(table, "Tipo", 9);
+            AddCellHeader(table, "Fecha digitacion", 9);
 
 
             foreach (var item in registros)
             {
-                AddCellText(table, item.Marca.ToString());
-                AddCellText(table, item.Fonema.ToString());
-                AddCellText(table, item.Nogaceta.ToString());
-                AddCellText(table, item.FgacetaString.ToString());
-                AddCellText(table, item.Codigo_clase.ToString());
-                AddCellText(table, item.FpresentaString.ToString());
-                AddCellText(table, item.Nopub.ToString());
-                AddCellText(table, item.Noexp.ToString());
-                AddCellText(table, item.Solicitant.ToString());
-                AddCellText(table, item.Codigo_pais.ToString());
-                AddCellText(table, item.Apoderado.ToString());
-                AddCellText(table, item.Tipo.ToString());
-                AddCellText(table, item.FdigitacioString.ToString());
+                AddCellText(table, item.Marca.ToString(), 8);
+                AddCellText(table, item.Fonema.ToString(), 8);
+                AddCellText(table, item.Nogaceta.ToString(), 8);
+                AddCellText(table, item.FgacetaString.ToString(), 8);
+                AddCellText(table, item.Codigo_clase.ToString(), 8);
+                AddCellText(table, item.FpresentaString.ToString(), 8);
+                AddCellText(table, item.Nopub.ToString(), 8);
+                AddCellText(table, item.Noexp.ToString(), 8);
+                AddCellText(table, item.Solicitant.ToString(), 8);
+                AddCellText(table, item.Codigo_pais.ToString(), 8);
+                AddCellText(table, item.Apoderado.ToString(), 8);
+                AddCellText(table, item.Tipo.ToString(), 8);
+                AddCellText(table, item.FdigitacioString.ToString(), 8);
             }
 
             doc.Add(table);
@@ -153,25 +217,125 @@ namespace Rule
             fs.Close();
         }
 
-        private static void AddCellHeader(PdfPTable table, string text)
+        private static void AddCellHeader(PdfPTable table, string text, float size)
         {
             BaseFont btnColumnHeader = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-            Font fntColumnHeader = new Font(btnColumnHeader, 9, 1, BaseColor.WHITE);
+            Font fntColumnHeader = new Font(btnColumnHeader, size, 1, BaseColor.WHITE);
             PdfPCell cell = new PdfPCell(new Phrase(text, fntColumnHeader));
             cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
             cell.VerticalAlignment = PdfPCell.ALIGN_MIDDLE;
             cell.BackgroundColor = BaseColor.GRAY;
             table.AddCell(cell);
         }
-        private static void AddCellText(PdfPTable table, string text)
+        private static void AddCellText(PdfPTable table, string text, float size)
         {
             BaseFont btnColumnHeader = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-            Font fntColumnHeader = new Font(btnColumnHeader, 8, Font.ITALIC);
+            Font fntColumnHeader = new Font(btnColumnHeader, size, Font.ITALIC);
             PdfPCell cell = new PdfPCell(new Phrase(text, fntColumnHeader));
             cell.HorizontalAlignment = PdfPCell.ALIGN_LEFT;
             cell.VerticalAlignment = PdfPCell.ALIGN_MIDDLE;
             table.AddCell(cell);
         }
+
+        public void ArmarPDFComparacion(string rutaDepositar)
+        {
+            List<ResultadoComparacion> grupos = ConsultarGrupos();
+            if (grupos == null) grupos = new List<ResultadoComparacion>();
+
+            FileStream fs = new FileStream(rutaDepositar,
+                FileMode.Create, FileAccess.Write, FileShare.None);
+            Document doc = new Document();
+            doc.SetPageSize(PageSize.A4);
+            PdfWriter writer = PdfWriter.GetInstance(doc, fs);
+            writer.PageEvent = new PageEventHelper();
+
+            doc.Open();
+
+
+            //Report Header
+            BaseFont bfntHead = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+            Font fntHead = new Font(bfntHead, 14, 1, BaseColor.BLACK);
+            Paragraph prgHeading = new Paragraph();
+            prgHeading.Alignment = Element.ALIGN_CENTER;
+            prgHeading.Add(new Chunk("resultado comparación".ToUpper(), fntHead));
+            doc.Add(prgHeading);
+
+            //Add a line seperation
+            Paragraph p = new Paragraph(new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(0.0F, 100.0F, BaseColor.BLACK,
+                Element.ALIGN_CENTER, 1)));
+            doc.Add(p);
+            //Add line break
+            doc.Add(new Chunk("\n", fntHead));
+
+
+            PdfPTable table = null;
+            float[] widths = null;
+            List<ResultadoComparacion> registros = null;
+            PdfPTable t1 = null;
+
+            Font fnt = new Font(bfntHead, 10, 1, BaseColor.BLACK);
+            Paragraph prg = new Paragraph();
+            prg.Alignment = Element.ALIGN_LEFT;
+            prg.Add(new Chunk($"Fecha Proceso: {DateTime.Now.ToString("MM/dd/yyyy")}", fnt));
+
+            foreach (var grupo in grupos)
+            {
+                registros = ConsultarGrupo(grupo);
+                if (registros == null) registros = new List<ResultadoComparacion>();
+                
+                //Write the table
+                t1 = new PdfPTable(2);
+                t1.TotalWidth = 500f;
+                t1.LockedWidth = true;
+                widths = new float[] { 100f, 400f };
+                t1.SetWidths(widths);
+                AddCellText(t1, "Marca:", 15);
+                AddCellText(t1, grupo.Marca, 14);
+                doc.Add(t1);
+
+                //Write the table
+                t1 = new PdfPTable(4);
+                t1.TotalWidth = 500f;
+                t1.LockedWidth = true;
+                widths = new float[] { 60f, 140f, 60f, 140f };
+                t1.SetWidths(widths);
+                AddCellText(t1, "Clase:", 15);
+                AddCellText(t1, grupo.Clase.ToString(), 15);
+
+                AddCellText(t1, "Gaceta N°:", 15);
+                AddCellText(t1, grupo.Gaceta.ToString(), 15);
+                doc.Add(t1);
+
+                //Write the table
+                table = new PdfPTable(3);
+                table.TotalWidth = 500f;
+                table.LockedWidth = true;
+                widths = new float[] { 180f, 180f, 140f };
+                table.SetWidths(widths);
+
+                //Table header            
+                AddCellHeader(table, "Folder", 12);
+                AddCellHeader(table, "Resultado Comparar", 12);
+                AddCellHeader(table, "Fecha", 12);
+
+                foreach (var item in registros)
+                {
+                    AddCellText(table, item.Folder.ToString(), 10);
+                    AddCellText(table, item.Resultado.ToString(), 10);
+                    AddCellText(table, item.FechaString, 10);
+                }
+                doc.Add(table);
+
+                doc.Add(new Chunk("\n", fnt));                
+                doc.Add(prg);
+
+                doc.Add(new Chunk("\n", fnt));
+            }
+            doc.Close();
+            writer.Close();
+            fs.Close();
+        }
+
 
         public void ArmarExel(List<Record> registros, string rutaDepositar)
         {
@@ -211,7 +375,48 @@ namespace Rule
             sl.SaveAs(rutaDepositar);
         }
 
+        #endregion
+
+
         public void Dispose()
         { }
+    }
+
+    public class PageEventHelper : PdfPageEventHelper
+    {
+        PdfContentByte cb;
+        PdfTemplate template;
+        
+        public override void OnOpenDocument(PdfWriter writer, Document document)
+        {
+            cb = writer.DirectContent;
+            template = cb.CreateTemplate(50, 50);
+        }
+
+        public override void OnEndPage(PdfWriter writer, Document doc)
+        {
+
+            iTextSharp.text.Font font = FontFactory.GetFont(BaseFont.TIMES_ROMAN, 9,Font.NORMAL,BaseColor.BLACK);
+            //tbl footer
+            PdfPTable footerTbl = new PdfPTable(1);
+            footerTbl.TotalWidth = doc.PageSize.Width;
+                       
+            //numero de la page
+            Chunk myFooter = new Chunk("Página " + (doc.PageNumber), FontFactory.GetFont
+                (FontFactory.HELVETICA_OBLIQUE, 8, BaseColor.BLACK));
+            PdfPCell footer = new PdfPCell(new Phrase(myFooter));
+            footer.Border = iTextSharp.text.Rectangle.NO_BORDER;
+            footer.HorizontalAlignment = Element.ALIGN_RIGHT;
+            footerTbl.AddCell(footer);
+
+
+            footerTbl.WriteSelectedRows(0, -1, 0, (doc.BottomMargin + 80), writer.DirectContent);
+        }
+
+        public override void OnCloseDocument(PdfWriter writer, Document document)
+        {
+            base.OnCloseDocument(writer, document);
+
+        }
     }
 }

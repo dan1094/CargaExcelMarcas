@@ -84,7 +84,12 @@
         <asp:Button ID="btnFiltrar" class="btn btn-primary btn-lg" runat="server" Text="Buscar" OnClick="btnFiltrar_Click" />
         &nbsp;
         <asp:TextBox ID="txtFltro" runat="server"></asp:TextBox>
-
+        <br />
+        <br />
+        <asp:Button ID="btnComparar" class="btn btn-primary btn-lg" runat="server" Text="Comparar" OnClick="btnComparar_Click" />
+        &nbsp;&nbsp;&nbsp;
+        <asp:Button ID="btnDescargarComparacion" class="btn btn-primary btn-lg" runat="server"
+            Text="Descargar Comparacion" OnClick="btnDescargarComparacion_Click" />
         <br />
         <br />
         <br />
