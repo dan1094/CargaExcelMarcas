@@ -282,7 +282,7 @@ namespace Rule
             {
                 registros = ConsultarGrupo(grupo);
                 if (registros == null) registros = new List<ResultadoComparacion>();
-                
+
                 //Write the table
                 t1 = new PdfPTable(2);
                 t1.TotalWidth = 500f;
@@ -326,7 +326,7 @@ namespace Rule
                 }
                 doc.Add(table);
 
-                doc.Add(new Chunk("\n", fnt));                
+                doc.Add(new Chunk("\n", fnt));
                 doc.Add(prg);
 
                 doc.Add(new Chunk("\n", fnt));
@@ -386,7 +386,7 @@ namespace Rule
     {
         PdfContentByte cb;
         PdfTemplate template;
-        
+
         public override void OnOpenDocument(PdfWriter writer, Document document)
         {
             cb = writer.DirectContent;
@@ -396,21 +396,21 @@ namespace Rule
         public override void OnEndPage(PdfWriter writer, Document doc)
         {
 
-            iTextSharp.text.Font font = FontFactory.GetFont(BaseFont.TIMES_ROMAN, 9,Font.NORMAL,BaseColor.BLACK);
+            Font font = FontFactory.GetFont(BaseFont.TIMES_ROMAN, 9, Font.NORMAL, BaseColor.BLACK);
             //tbl footer
             PdfPTable footerTbl = new PdfPTable(1);
             footerTbl.TotalWidth = doc.PageSize.Width;
-                       
+
             //numero de la page
             Chunk myFooter = new Chunk("Página " + (doc.PageNumber), FontFactory.GetFont
                 (FontFactory.HELVETICA_OBLIQUE, 8, BaseColor.BLACK));
             PdfPCell footer = new PdfPCell(new Phrase(myFooter));
-            footer.Border = iTextSharp.text.Rectangle.NO_BORDER;
+            footer.Border = Rectangle.NO_BORDER;
             footer.HorizontalAlignment = Element.ALIGN_RIGHT;
             footerTbl.AddCell(footer);
 
 
-            footerTbl.WriteSelectedRows(0, -1, 0, (doc.BottomMargin + 80), writer.DirectContent);
+            footerTbl.WriteSelectedRows(0, -1, doc.RightMargin - 100, doc.BottomMargin, writer.DirectContent);
         }
 
         public override void OnCloseDocument(PdfWriter writer, Document document)
