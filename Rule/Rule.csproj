@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="FiltroRule.cs" />
     <Compile Include="FolderRule.cs" />
+    <Compile Include="ImpresionRule.cs" />
     <Compile Include="MarcasRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

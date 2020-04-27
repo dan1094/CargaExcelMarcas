@@ -247,8 +247,6 @@ namespace Rule
             Document doc = new Document();
             doc.SetPageSize(PageSize.A4);
             PdfWriter writer = PdfWriter.GetInstance(doc, fs);
-            writer.PageEvent = new PageEventHelper();
-
             doc.Open();
 
 
@@ -327,13 +325,14 @@ namespace Rule
                 doc.Add(table);
 
                 doc.Add(new Chunk("\n", fnt));
-                doc.Add(prg);
-
-                doc.Add(new Chunk("\n", fnt));
+                doc.Add(prg); // fecha proceso
+                doc.Add(Chunk.NEXTPAGE);
             }
             doc.Close();
             writer.Close();
             fs.Close();
+
+            ImpresionRule.FoliarPdf(rutaDepositar);
         }
 
 
@@ -382,41 +381,5 @@ namespace Rule
         { }
     }
 
-    public class PageEventHelper : PdfPageEventHelper
-    {
-        PdfContentByte cb;
-        PdfTemplate template;
 
-        public override void OnOpenDocument(PdfWriter writer, Document document)
-        {
-            cb = writer.DirectContent;
-            template = cb.CreateTemplate(50, 50);
-        }
-
-        public override void OnEndPage(PdfWriter writer, Document doc)
-        {
-
-            Font font = FontFactory.GetFont(BaseFont.TIMES_ROMAN, 9, Font.NORMAL, BaseColor.BLACK);
-            //tbl footer
-            PdfPTable footerTbl = new PdfPTable(1);
-            footerTbl.TotalWidth = doc.PageSize.Width;
-
-            //numero de la page
-            Chunk myFooter = new Chunk("Página " + (doc.PageNumber), FontFactory.GetFont
-                (FontFactory.HELVETICA_OBLIQUE, 8, BaseColor.BLACK));
-            PdfPCell footer = new PdfPCell(new Phrase(myFooter));
-            footer.Border = Rectangle.NO_BORDER;
-            footer.HorizontalAlignment = Element.ALIGN_RIGHT;
-            footerTbl.AddCell(footer);
-
-
-            footerTbl.WriteSelectedRows(0, -1, doc.RightMargin - 100, doc.BottomMargin, writer.DirectContent);
-        }
-
-        public override void OnCloseDocument(PdfWriter writer, Document document)
-        {
-            base.OnCloseDocument(writer, document);
-
-        }
-    }
 }
