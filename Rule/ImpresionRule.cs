@@ -13,9 +13,10 @@ namespace Rule
             //System.Drawing.Color? color = System.Drawing.Color.Black;
             //FolioPosition folioPosition = FolioPosition.BottomRight;
             //FolioType folioType = FolioType.Numeric;
+            string fechaProceso = $"Fecha Proceso: {DateTime.Now.ToString("dd/MM/yyyy")}";
             string folioPrefix = "Pag. ";
             string folioSuffix = "";
-            string folioFont = FontFactory.TIMES_ROMAN.ToString();
+            //string folioFont = FontFactory.TIMES_ROMAN.ToString();
             //FolioFace folioFace = FolioFace.Roman;
             float folioSize = 9;
             PdfReader reader = new PdfReader(RutaPDf);
@@ -53,6 +54,10 @@ namespace Rule
                     float folioy = folioSize;
                     foliox = pageSize.Width - strWidth - padding;
                     pdfPageContents.ShowTextAligned(PdfContentByte.ALIGN_LEFT, folio, foliox, folioy, 0);
+
+                    strWidth = pdfPageContents.GetEffectiveStringWidth(fechaProceso, false);
+                    pdfPageContents.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, fechaProceso, padding + strWidth, folioy, 0);
+
                     pdfPageContents.EndText();
                 }
                 pdfStamper.Close();

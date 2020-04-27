@@ -271,11 +271,6 @@ namespace Rule
             List<ResultadoComparacion> registros = null;
             PdfPTable t1 = null;
 
-            Font fnt = new Font(bfntHead, 10, 1, BaseColor.BLACK);
-            Paragraph prg = new Paragraph();
-            prg.Alignment = Element.ALIGN_LEFT;
-            prg.Add(new Chunk($"Fecha Proceso: {DateTime.Now.ToString("MM/dd/yyyy")}", fnt));
-
             foreach (var grupo in grupos)
             {
                 registros = ConsultarGrupo(grupo);
@@ -324,8 +319,6 @@ namespace Rule
                 }
                 doc.Add(table);
 
-                doc.Add(new Chunk("\n", fnt));
-                doc.Add(prg); // fecha proceso
                 doc.Add(Chunk.NEXTPAGE);
             }
             doc.Close();
